@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -20,6 +21,7 @@ def login_view(request):
     return render(request, 'sales/login.html')
 
 
+@login_required
 def main_page(request):
     return render(request, 'sales/main_page.html')
 
@@ -76,6 +78,7 @@ class CustomerDeleteView(DeleteView):
     success_url = reverse_lazy('customer_list')
 
 
+@login_required
 # Views for Sales Orders
 def sales_order_create(request):
     if request.method == 'POST':
@@ -88,11 +91,13 @@ def sales_order_create(request):
     return render(request, 'sales/salesorder_form.html', {'form': form})
 
 
+@login_required
 def sales_order_detail(request, pk):
     sales_order = get_object_or_404(SalesOrder, pk=pk)
     return render(request, 'sales/salesorder_detail.html', {'sales_order': sales_order})
 
 
+@login_required
 def sales_order_item_create(request, pk):
     sales_order = get_object_or_404(SalesOrder, pk=pk)
     if request.method == 'POST':
@@ -107,6 +112,7 @@ def sales_order_item_create(request, pk):
     return render(request, 'sales/salesorderitem_form.html', {'form': form})
 
 
+@login_required
 def sales_order_item_delete(request, pk, item_pk):
     sales_order = get_object_or_404(SalesOrder, pk=pk)
     sales_order_item = get_object_or_404(SalesOrderItem, pk=item_pk)

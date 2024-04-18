@@ -1,29 +1,36 @@
 from django import forms
 from .models import Product, Customer, SalesOrder
 
+
 class ProductForm(forms.ModelForm):
     """
     Form for creating and editing products.
     """
+
     class Meta:
         model = Product
         fields = ['name', 'description', 'unit', 'price', 'category']
+
 
 class CustomerForm(forms.ModelForm):
     """
     Form for creating and editing customers.
     """
+
     class Meta:
         model = Customer
         fields = ['name', 'contact_name', 'email', 'phone_number']
+
 
 class SalesOrderForm(forms.ModelForm):
     """
     Form for creating and editing sales orders.
     """
+
     class Meta:
         model = SalesOrder
         exclude = ['date']  # Exclude the non-editable field 'date'
+
 
 class SalesOrderItemForm(forms.Form):
     """
