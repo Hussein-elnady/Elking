@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Welcome to the Sales and Inventory Management System</h1>
+    <ul>
+        <li><a href="{% url 'product_list' %}">Products</a></li>
+        <li><a href="{% url 'customer_list' %}">Customers</a></li>
+        <li><a href="{% url 'sales_order_create' %}">Create Sales Order</a></li>
+        <!-- Add more links as needed -->
+    </ul>
+</body>
+</html>

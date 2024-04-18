@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Order Detail</title>
+</head>
+<body>
+    <h1>Sales Order Detail</h1>
+    <p>ID: {{ sales_order.id }}</p>
+    <p>Customer: {{ sales_order.customer }}</p>
+    <p>Date: {{ sales_order.date }}</p>
+    <h2>Items</h2>
+    <ul>
+    {% for item in sales_order.items.all %}
+        <li>{{ item.quantity }}x {{ item.product }} - {{ item.unit_price }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
