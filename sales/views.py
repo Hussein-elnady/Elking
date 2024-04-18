@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -5,8 +6,23 @@ from .models import Product, Customer, SalesOrder
 from .forms import ProductForm, CustomerForm, SalesOrderForm, SalesOrderItemForm
 
 
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('main_page')
+        else:
+            error_message = "Invalid username or password."
+            return render(request, 'sales/login.html', {'error_message': error_message})
+    return render(request, 'sales/login.html')
+
+
 def main_page(request):
     return render(request, 'sales/main_page.html')
+
 
 # Views for Products
 class ProductListView(ListView):

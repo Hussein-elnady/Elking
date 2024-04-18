@@ -16,8 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
+from sales import views as sales_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('sales.urls')),
+    path('sales/', include('sales.urls')),
+    path('', RedirectView.as_view(url='/login/')),
+    path('login/', sales_views.login_view, name='login'),
+    path('main/', sales_views.main_page, name='main_page'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
