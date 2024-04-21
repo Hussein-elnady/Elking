@@ -1,8 +1,47 @@
+{% extends 'sales/base.html' %}
+
+{% block title %}
+    Confirm Delete Product
+{% endblock %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Confirm Delete Product</title>
+    <style>
+        /* Add CSS styling for confirmation page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+        }
+        button[type="submit"] {
+            background-color: #d9534f;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #c9302c;
+        }
+    </style>
 </head>
 <body>
     <h1>Confirm Delete Product</h1>
@@ -13,3 +52,4 @@
     </form>
 </body>
 </html>
+{% endblock %}

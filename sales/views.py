@@ -1,13 +1,17 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .models import Product, Customer, SalesOrder
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import CreateView, UpdateView, DeleteView
+from .models import Product, Customer, SalesOrder, SalesOrderItem
 from .forms import ProductForm, CustomerForm, SalesOrderForm, SalesOrderItemForm
 
 
 def login_view(request):
+    """
+    View for user login.
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -23,100 +27,110 @@ def login_view(request):
 
 @login_required
 def main_page(request):
+    """
+    View for the main page.
+    """
     return render(request, 'sales/main_page.html')
 
 
-# Views for Products
-class ProductListView(ListView):
-    model = Product
-    template_name = 'sales/product_list.html'  # Your product list template
-
-
-class ProductCreateView(CreateView):
+# ------------------------------ Product ------------------------------ #
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    """
+    View for creating a new product.
+    """
     model = Product
     form_class = ProductForm
-    template_name = 'sales/product_form.html'  # Your product create template
-    success_url = reverse_lazy('product_list')
-
-
-class ProductUpdateView(UpdateView):
-    model = Product
-    form_class = ProductForm
-    template_name = 'sales/product_form.html'  # Your product update template
-    success_url = reverse_lazy('product_list')
-
-
-class ProductDeleteView(DeleteView):
-    model = Product
-    template_name = 'sales/product_confirm_delete.html'  # Your product delete confirmation template
-    success_url = reverse_lazy('product_list')
-
-
-# Views for Customers
-class CustomerListView(ListView):
-    model = Customer
-    template_name = 'sales/customer_list.html'  # Your customer list template
-
-
-class CustomerCreateView(CreateView):
-    model = Customer
-    form_class = CustomerForm
-    template_name = 'sales/customer_form.html'  # Your customer create template
-    success_url = reverse_lazy('customer_list')
-
-
-class CustomerUpdateView(UpdateView):
-    model = Customer
-    form_class = CustomerForm
-    template_name = 'sales/customer_form.html'  # Your customer update template
-    success_url = reverse_lazy('customer_list')
-
-
-class CustomerDeleteView(DeleteView):
-    model = Customer
-    template_name = 'sales/customer_confirm_delete.html'  # Your customer delete confirmation template
-    success_url = reverse_lazy('customer_list')
+    template_name = 'sales/product_create.html'
+    success_url = reverse_lazy('sales:product_list')
 
 
 @login_required
-# Views for Sales Orders
-def sales_order_create(request):
+def product_list(request):
+    """
+    View for listing all products.
+    """
+    # Fetch all products from the database
+    products = Product.objects.all()
+
+    # Handle search functionality
+    search_query = request.GET.get('search')
+    if search_query:
+        # Filter products based on name or code containing the search query
+        products = products.filter(name__icontains=search_query) | products.filter(code__icontains=search_query)
+
+    # Render the product list template with the fetched products
+    return render(request, 'sales/product_list.html', {'products': products})
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    View for updating a product.
+    """
+    model = Product
+    form_class = ProductForm
+    template_name = 'sales/product_update.html'
+    success_url = reverse_lazy('sales:product_list')
+
+
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    View for deleting a product.
+    """
+    model = Product
+    template_name = 'sales/product_confirm_delete.html'
+    success_url = reverse_lazy('sales:product_list')
+
+
+@login_required
+def product_detail(request, pk):
+    """
+    View for displaying details of a product.
+    """
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'sales/product_detail.html', {'product': product})
+
+
+# ------------------------------ Customer ------------------------------ #
+@login_required
+class CustomerCreateView(LoginRequiredMixin, CreateView):
+    """
+    View for creating a new customer.
+    """
+    model = Customer
+    form_class = CustomerForm
+    template_name = 'sales/customer_create.html'
+    success_url = reverse_lazy('sales:customer_list')
+
+@login_required
+def customer_list(request):
+    """
+    View for listing all customers.
+    """
+    customers = Customer.objects.all()
+    return render(request, 'sales/customer_list.html', {'customers': customers})
+
+
+@login_required
+def create_sales_order(request):
+    """
+    View for creating a new sales order.
+    """
     if request.method == 'POST':
         form = SalesOrderForm(request.POST)
         if form.is_valid():
-            sales_order = form.save()
-            return redirect('sales_order_detail', pk=sales_order.pk)
+            sales_order = form.save(commit=False)
+            sales_order.save()
+            form.save_m2m()
+            return redirect('sales:sales_order_detail', pk=sales_order.pk)
     else:
         form = SalesOrderForm()
-    return render(request, 'sales/salesorder_form.html', {'form': form})
+    return render(request, 'sales/create_sales_order.html', {'form': form})
 
 
 @login_required
 def sales_order_detail(request, pk):
+    """
+    View for displaying details of a sales order.
+    """
     sales_order = get_object_or_404(SalesOrder, pk=pk)
-    return render(request, 'sales/salesorder_detail.html', {'sales_order': sales_order})
-
-
-@login_required
-def sales_order_item_create(request, pk):
-    sales_order = get_object_or_404(SalesOrder, pk=pk)
-    if request.method == 'POST':
-        form = SalesOrderItemForm(request.POST)
-        if form.is_valid():
-            sales_order_item = form.save(commit=False)
-            sales_order_item.sales_order = sales_order
-            sales_order_item.save()
-            return redirect('sales_order_detail', pk=pk)
-    else:
-        form = SalesOrderItemForm()
-    return render(request, 'sales/salesorderitem_form.html', {'form': form})
-
-
-@login_required
-def sales_order_item_delete(request, pk, item_pk):
-    sales_order = get_object_or_404(SalesOrder, pk=pk)
-    sales_order_item = get_object_or_404(SalesOrderItem, pk=item_pk)
-    if request.method == 'POST':
-        sales_order_item.delete()
-        return redirect('sales_order_detail', pk=pk)
-    return render(request, 'sales/salesorderitem_confirm_delete.html', {'sales_order_item': sales_order_item})
+    return render(request, 'sales/sales_order_detail.html', {'sales_order': sales_order})

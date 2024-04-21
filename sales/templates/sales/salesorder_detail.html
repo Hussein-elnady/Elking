@@ -1,19 +1,30 @@
+{% extends 'sales/base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Order Detail</title>
 </head>
 <body>
-    <h1>Sales Order Detail</h1>
-    <p>ID: {{ sales_order.id }}</p>
+    <h1>Sales Order Detail - {{ sales_order.id }}</h1>
     <p>Customer: {{ sales_order.customer }}</p>
     <p>Date: {{ sales_order.date }}</p>
-    <h2>Items</h2>
+    <h2>Items:</h2>
     <ul>
-    {% for item in sales_order.items.all %}
-        <li>{{ item.quantity }}x {{ item.product }} - {{ item.unit_price }}</li>
-    {% endfor %}
+        {% for item in sales_order.items.all %}
+        <li>{{ item.quantity }}x {{ item.product.name }} - {{ item.unit_price }}</li>
+        {% endfor %}
     </ul>
+    <p>Total Price: {{ sales_order.total_price }}</p>
 </body>
 </html>
+
+{% endblock %}

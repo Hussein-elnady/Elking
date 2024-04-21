@@ -1,16 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Product List</title>
-</head>
-<body>
+{% extends 'sales/base.html' %}
+
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<header>
     <h1>Product List</h1>
-    <ul>
-    {% for product in object_list %}
-        <li>{{ product.name }}</li>
-        <!-- Display other product details as needed -->
-    {% endfor %}
-    </ul>
-</body>
-</html>
+    <section class="add-product">
+        <ul>
+            <li><a href="{% url 'sales:product_create' %}" class="btn btn-primary add-product-btn">Add Product</a></li>
+        </ul>
+    </section>
+    <div class="search-container">
+        <input type="text" class="form-control" id="search" placeholder="Enter product code or name" autocomplete="on">
+        <button type="button" class="btn btn-primary search-btn">Search</button>
+    </div>
+</header>
+
+<section class="container">
+    <table class="table table-striped" id="product-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>${{ product.price }}</td>
+                <td class="text-center">
+                    <a href="{% url 'sales:product_update' product.pk %}" class="btn btn-info">Edit</a>
+                    <a href="{% url 'sales:product_delete' product.pk %}" class="btn btn-danger">Delete</a>
+                    <a href="{% url 'sales:product_detail' product.pk %}" class="btn btn-secondary">Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<style>
+    body {
+        background: linear-gradient(to right, #d2fff5, #e4b6db);
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        background: linear-gradient(to right, #5cb851, #2980b9);
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-container {
+        max-width: 300px;
+        display: flex;
+        background: linear-gradient(to right, #5cb851, #2980b9);
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-color: #5cb851;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .form-control {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .add-product-btn {
+        border-radius: 5px;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .add-product ul a {
+        text-decoration: none;
+        color: #fff;
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 15px;
+        background-image: linear-gradient(to right, #428bca, #5cb851);
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        font-family: 'Poppins', sans-serif;
+        text-align: center;
+    }
+
+    .add-product ul a:hover {
+        background-image: linear-gradient(to right, #6dd5fa, #2980b9);
+    }
+</style>
+
+<script>
+    // JavaScript code for search functionality
+    $(document).ready(function () {
+        $('#search').on('keyup', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('#product-table tbody tr').each(function () {
+                var productCode = $(this).find('td:eq(0)').text().toLowerCase();
+                var productName = $(this).find('td:eq(1)').text().toLowerCase();
+                if (productCode.includes(searchText) || productName.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

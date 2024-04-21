@@ -1,0 +1,97 @@
+{% extends 'sales/base.html' %}
+
+{% block title %}
+    Product Detail
+{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <style>
+        /* Add CSS styling for product detail page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        strong {
+            font-weight: bold;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .actions a {
+            background-color: #428bca;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        .actions a:hover {
+            background-color: #3071a9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Detail</h1>
+    <table>
+        <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td><strong>Code:</strong></td>
+            <td>{{ product.code }}</td>
+        </tr>
+        <tr>
+            <td><strong>Name:</strong></td>
+            <td>{{ product.name }}</td>
+        </tr>
+        <tr>
+            <td><strong>Description:</strong></td>
+            <td>{{ product.description }}</td>
+        </tr>
+        <tr>
+            <td><strong>Unit:</strong></td>
+            <td>{{ product.unit }}</td>
+        </tr>
+        <tr>
+            <td><strong>Price:</strong></td>
+            <td>${{ product.price }}</td>
+        </tr>
+        <tr>
+            <td><strong>Category:</strong></td>
+            <td>{{ product.category }}</td>
+        </tr>
+    </table>
+    <div class="actions">
+        <a href="{% url 'sales:product_update' product.pk %}">Edit</a>
+        <a href="{% url 'sales:product_delete' product.pk %}">Delete</a>
+    </div>
+</body>
+</html>
+{% endblock %}

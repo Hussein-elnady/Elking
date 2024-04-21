@@ -1,16 +1,26 @@
+{% extends 'sales/base.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer List</title>
 </head>
 <body>
     <h1>Customer List</h1>
     <ul>
-    {% for customer in object_list %}
-        <li>{{ customer.name }}</li>
-        <!-- Display other customer details as needed -->
-    {% endfor %}
+        {% for customer in customers %}
+        <li>{{ customer.name }} - {{ customer.contact_name }} - {{ customer.email }}</li>
+        {% endfor %}
     </ul>
 </body>
 </html>
+
+{% endblock %}
